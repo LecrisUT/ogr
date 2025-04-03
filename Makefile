@@ -3,7 +3,6 @@ TEST_TARGET ?= ./tests/
 PY_PACKAGE := ogr
 OGR_IMAGE := ogr
 COLOR ?= yes
-COV_REPORT ?= --cov=ogr --cov-report=term-missing
 
 build-test-image: recipe.yaml
 	ansible-bender build --build-volumes $(CURDIR):/src:Z -- ./recipe.yaml $(BASE_IMAGE) $(OGR_IMAGE)
@@ -11,14 +10,13 @@ build-test-image: recipe.yaml
 check:
 	@#`python3 -m pytest` doesn't work here b/c the way requre overrides import system:
 	@#`AttributeError: module 'importlib_metadata' has no attribute 'distributions'
-	PYTHONPATH=$(CURDIR) PYTHONDONTWRITEBYTECODE=1 python3 /usr/bin/pytest --color=$(COLOR) --verbose --showlocals $(COV_REPORT) $(TEST_TARGET)
+	PYTHONPATH=$(CURDIR) PYTHONDONTWRITEBYTECODE=1 python3 /usr/bin/pytest --color=$(COLOR) --verbose --showlocals $(TEST_TARGET)
 
 check-in-container:
 	podman run --rm -it \
 		-v $(CURDIR):/src:Z -w /src \
 		--env TEST_TARGET \
 		--env COLOR \
-		--env COV_REPORT \
 		$(OGR_IMAGE) \
 		make -e GITHUB_TOKEN=$(GITHUB_TOKEN) GITLAB_TOKEN=$(GITLAB_TOKEN) check
 

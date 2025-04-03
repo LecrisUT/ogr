@@ -52,7 +52,6 @@ Homepage = "https://github.com/packit/ogr"
 [project.optional-dependencies]
 testing = [
     "pytest",
-    "pytest-cov",
     "flexmock",
 ]
 
